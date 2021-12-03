@@ -1,13 +1,13 @@
 /// <reference types="cypress" />
 
 const alice = {
-  username: "Alice",
-  email: "alice@example.com",
+  username: "Alice2",
+  email: "alice2@example.com",
   password: "Z6#6%xfLTarZ9U",
 };
 const bob = {
-  username: "Bob",
-  email: "bob@example.com",
+  username: "Bob2",
+  email: "bob2@example.com",
   password: "L%e$xZHC4QKP@F",
 };
 
@@ -22,8 +22,8 @@ describe("New Feature: Unread Messages", () => {
   it("check unread messages count appear", () => {
     cy.login(alice.username, alice.password);
 
-    cy.get("input[name=search]").type("Bob");
-    cy.contains("Bob").click();
+    cy.get("input[name=search]").type(bob.username);
+    cy.contains(bob.username).click();
 
     cy.get("input[name=text]").type("First message{enter}");
     cy.get("input[name=text]").type("Second message{enter}");
@@ -33,7 +33,7 @@ describe("New Feature: Unread Messages", () => {
     cy.reload();
     cy.login(bob.username, bob.password);
 
-    cy.get("input[name=search]").type("Alice");
+    cy.get("input[name=search]").type(alice.username);
 
     cy.contains(new RegExp("^3$", "g")).should(
       "have.css",
@@ -51,8 +51,8 @@ describe("New Feature: Unread Messages", () => {
     cy.reload();
 
     cy.login(bob.username, bob.password);
-    cy.get("input[name=search]").type("Alice");
-    cy.contains("Alice").click();
+    cy.get("input[name=search]").type(alice.username);
+    cy.contains(alice.username).click();
 
     cy.contains(new RegExp("^3$", "g")).should("not.exist");
     cy.contains("Third message")
@@ -67,8 +67,8 @@ describe("New Feature: Unread Messages", () => {
     cy.reload();
     cy.login(bob.username, bob.password);
 
-    cy.get("input[name=search]").type("Alice");
-    cy.contains("Alice").click();
+    cy.get("input[name=search]").type(alice.username);
+    cy.contains(alice.username).click();
     cy.get("input[name=text]").type(`Test message{enter}`);
 
     cy.contains(new RegExp("^1$", "g")).should("not.exist");
@@ -80,20 +80,20 @@ describe("New Feature: Unread Messages", () => {
     // clear the unread messages for next test
     cy.logout();
     cy.login(alice.username, alice.password);
-    cy.get("input[name=search]").type("Bob");
+    cy.get("input[name=search]").type(bob.username);
     cy.contains("Test message").should(($labels) => {
       expect($labels).to.have.css("font-weight", "600");
       expect($labels).to.have.css("color", "rgb(0, 0, 0)");
     });
-    cy.contains("Bob").click();
+    cy.contains(bob.username).click();
   });
 
   it("too many unread messages", () => {
     cy.logout();
     cy.reload();
     cy.login(bob.username, bob.password);
-    cy.get("input[name=search]").type("Alice");
-    cy.contains("Alice").click();
+    cy.get("input[name=search]").type(alice.username);
+    cy.contains(alice.username).click();
     const total = 20;
     for (let i = 1; i <= total; i++) {
       cy.get("input[name=text]").type(`message #${i}{enter}`);
@@ -102,7 +102,7 @@ describe("New Feature: Unread Messages", () => {
     cy.logout();
     cy.login(alice.username, alice.password);
 
-    cy.get("input[name=search]").type("Bob");
+    cy.get("input[name=search]").type(bob.username);
     cy.contains(`message #${total}`)
       .first()
       .should("have.css", "font-weight", "600")
