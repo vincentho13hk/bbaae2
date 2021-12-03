@@ -2,6 +2,27 @@ const router = require("express").Router();
 const { Conversation, Message } = require("../../db/models");
 const onlineUsers = require("../../onlineUsers");
 
+// expects { conversationId } in body
+router.post("/read", async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    const userId = req.user.id;
+    const { conversationId } = req.body;
+    // check conversation id, and toggle read status if found
+    if (conversationId) {
+      let readTotal = await Message.readUnreadMessages(conversationId, userId);
+      return res.json({ count: readTotal });
+    } else {
+      return res.json({ count: 0 });
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 // expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)
 router.post("/", async (req, res, next) => {
   try {
