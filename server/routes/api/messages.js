@@ -3,7 +3,7 @@ const { Conversation, Message } = require("../../db/models");
 const onlineUsers = require("../../onlineUsers");
 
 // expects { conversationId } in body
-router.post("/read", async (req, res, next) => {
+router.patch("/read", async (req, res, next) => {
   try {
     if (!req.user) {
       return res.sendStatus(401);
@@ -12,11 +12,9 @@ router.post("/read", async (req, res, next) => {
     const { conversationId } = req.body;
     // check conversation id, and toggle read status if found
     if (conversationId) {
-      let readTotal = await Message.readUnreadMessages(conversationId, userId);
-      return res.json({ count: readTotal });
-    } else {
-      return res.json({ count: 0 });
+      await Message.readUnreadMessages(conversationId, userId);
     }
+    return res.status(204).send();
   } catch (error) {
     console.error(error);
     next(error);

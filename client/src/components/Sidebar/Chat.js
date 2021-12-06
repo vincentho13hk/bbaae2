@@ -2,7 +2,6 @@ import React from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
-import { setActiveChat } from "../../store/activeConversation";
 import { selectActiveConversation } from "../../store/utils/thunkCreators";
 import { connect } from "react-redux";
 import PendingRead from "./PendingRead";
@@ -42,13 +41,7 @@ const Chat = (props) => {
         sidebar={true}
       />
       <ChatContent conversation={conversation} />
-      <PendingRead
-        counts={
-          conversation.messages.filter(
-            (msg) => !msg.read && msg.senderId === conversation.otherUser.id
-          ).length
-        }
-      />
+      <PendingRead counts={conversation.unread} />
     </Box>
   );
 };

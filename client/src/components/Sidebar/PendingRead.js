@@ -6,7 +6,7 @@ const useStyles = makeStyles(() => ({
     height: 20,
     width: 30,
     marginRight: 17,
-    backgroundColor: "#3F92FF",
+    backgroundColor: (show) => (show ? "#3F92FF" : "inherit"),
     borderRadius: 10,
   },
   msgCount: {
@@ -22,15 +22,14 @@ const useStyles = makeStyles(() => ({
 }));
 
 const PendingRead = (props) => {
-  const classes = useStyles();
   const { counts } = props;
-  const displayCount = counts < 10 ? counts : "9+";
+  const classes = useStyles(counts > 0);
 
-  return counts === 0 ? (
-    <></>
-  ) : (
+  return (
     <Box className={classes.root}>
-      <Typography className={classes.msgCount}>{displayCount}</Typography>
+      {counts > 0 && (
+        <Typography className={classes.msgCount}>{counts}</Typography>
+      )}
     </Box>
   );
 };

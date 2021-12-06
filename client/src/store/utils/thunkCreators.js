@@ -5,6 +5,8 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  messagesGetRead,
+  updateUnread,
   readMessages,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
@@ -81,17 +83,54 @@ export const fetchConversations = () => async (dispatch) => {
 };
 
 const updateMessagesToRead = async (conversationId) => {
-  const { data } = await axios.post("/api/messages/read", { conversationId });
+  const { data } = await axios.patch("/api/messages/read", { conversationId });
   return data;
 };
 
+export const getNewMessage = (msgData) => async (dispatch, getState) => {
+  try {
+    const senderId = msgData.message.senderId;
+    dispatch(setNewMessage(msgData.message, msgData.sender));
+    const activeUserId = getState().activeConversation.id;
+    if (!activeUserId || activeUserId !== senderId) {
+      dispatch(updateUnread(msgData.message.senderId, activeUserId));
+    } else {
+      // update to read for active Convo
+      const conversation = getState().conversations.find(
+        (convo) => convo.otherUser.id
+      );
+      if (conversation.id) {
+        await updateMessagesToRead(conversation.id);
+        socket.emit("read-latest-message", {
+          conversationId: conversation.id,
+          userId: senderId,
+        });
+        await updateMessagesToRead(conversation.id);
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const latestMessageIsRead =
+  (conversationId, userId) => async (dispatch) => {
+    // if(!setState().conversations.find(convo=>convo.id===conversationId)){
+    //   dispatch(addConversation)
+    // }
+    dispatch(messagesGetRead(conversationId, userId));
+  };
+
 export const selectActiveConversation =
   (otherUser, conversationId) => async (dispatch) => {
-    console.log(otherUser);
     try {
+      dispatch(setActiveChat(otherUser));
+      dispatch(readMessages(conversationId, otherUser.id));
       await updateMessagesToRead(conversationId);
-      dispatch(setActiveChat(otherUser.username));
-      dispatch(readMessages(otherUser.id));
+      socket.emit("read-latest-message", {
+        conversationId,
+        userId: otherUser.id,
+      });
     } catch (error) {
       console.error(error);
     }

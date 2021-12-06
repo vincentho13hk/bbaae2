@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+
 import { regexExpEmoji } from "../../helpers";
 
 const useStyles = makeStyles((theme) => ({
@@ -45,7 +46,7 @@ const getReadStatus = (conversation, otherUser) => {
 const ChatContent = (props) => {
   const { conversation } = props;
   const { latestMessageText, otherUser } = conversation;
-  const read = getReadStatus(conversation, otherUser);
+  // const read = getReadStatus(conversation, otherUser);
   const classes = useStyles();
 
   return (
@@ -56,7 +57,7 @@ const ChatContent = (props) => {
         </Typography>
         <Typography
           className={
-            read || regexExpEmoji.test(latestMessageText)
+            conversation.unread === 0 || regexExpEmoji.test(latestMessageText)
               ? classes.previewText
               : classes.previewUnreadText
           }
