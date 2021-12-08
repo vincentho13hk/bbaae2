@@ -1,10 +1,11 @@
 import io from "socket.io-client";
 import store from "./store";
+import { removeOfflineUser, addOnlineUser } from "./store/conversations";
+
 import {
-  setNewMessage,
-  removeOfflineUser,
-  addOnlineUser,
-} from "./store/conversations";
+  getNewMessage,
+  latestMessageIsRead,
+} from "./store/utils/thunkCreators";
 
 const socket = io(window.location.origin);
 
@@ -19,7 +20,14 @@ socket.on("connect", () => {
     store.dispatch(removeOfflineUser(id));
   });
   socket.on("new-message", (data) => {
-    store.dispatch(setNewMessage(data.message, data.sender));
+    if (data.recipientId === store.getState().user.id) {
+      store.dispatch(getNewMessage(data));
+    }
+  });
+  socket.on("read-latest-message", (data) => {
+    if (data.userId === store.getState().user.id) {
+      store.dispatch(latestMessageIsRead(data.conversationId, data.userId));
+    }
   });
 });
 

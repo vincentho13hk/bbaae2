@@ -1,6 +1,40 @@
 const router = require("express").Router();
+const { Op } = require("sequelize");
 const { Conversation, Message } = require("../../db/models");
 const onlineUsers = require("../../onlineUsers");
+
+// expects { conversationId } in body
+router.patch("/read", async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+
+    const userId = req.user.id;
+    const { conversationId } = req.body;
+    // if user is not part of the conversation should return 204
+    const conversation = await Conversation.findAll({
+      where: {
+        [Op.or]: {
+          user1Id: userId,
+          user2Id: userId,
+        },
+        id: conversationId,
+      },
+    });
+    if (conversation.length === 0) {
+      return res.sendStatus(403);
+    }
+    // check conversation id, and toggle read status if found
+    if (conversationId) {
+      await Message.readUnreadMessages(conversationId, userId);
+    }
+    return res.sendStatus(204);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 
 // expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)
 router.post("/", async (req, res, next) => {
