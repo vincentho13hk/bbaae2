@@ -115,9 +115,6 @@ export const getNewMessage = (msgData) => async (dispatch, getState) => {
 
 export const latestMessageIsRead =
   (conversationId, userId) => async (dispatch) => {
-    // if(!setState().conversations.find(convo=>convo.id===conversationId)){
-    //   dispatch(addConversation)
-    // }
     dispatch(messagesGetRead(conversationId, userId));
   };
 

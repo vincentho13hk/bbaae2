@@ -1,10 +1,9 @@
 import React from "react";
-import { Box } from "@material-ui/core";
+import { Badge, Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { selectActiveConversation } from "../../store/utils/thunkCreators";
 import { connect } from "react-redux";
-import PendingRead from "./PendingRead";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       cursor: "grab",
     },
+  },
+  msgBadge: {
+    marginRight: 17,
   },
 }));
 
@@ -41,7 +43,9 @@ const Chat = (props) => {
         sidebar={true}
       />
       <ChatContent conversation={conversation} />
-      <PendingRead counts={conversation.unread} />
+      <Box className={classes.msgBadge}>
+        <Badge badgeContent={conversation.unread} color="primary" />
+      </Box>
     </Box>
   );
 };

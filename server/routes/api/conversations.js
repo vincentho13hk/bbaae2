@@ -78,7 +78,6 @@ router.get("/", async (req, res, next) => {
       if (lastReadMsg) {
         convoJSON.lastReadMsgId = lastReadMsg.id;
       }
-      // convoJSON.messages.find((msg) => msg.read).lastRead = true;
       convoJSON.messages.reverse();
       conversations[i] = convoJSON;
     }

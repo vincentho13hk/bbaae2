@@ -32,21 +32,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// Change the text style by the read status
-const getReadStatus = (conversation, otherUser) => {
-  if (conversation.messages && conversation.messages.length > 0) {
-    const lastMsg = conversation.messages.slice(-1)[0];
-    const read = lastMsg.senderId === otherUser.id ? lastMsg.read : true;
-    return read;
-  } else {
-    return true;
-  }
-};
-
 const ChatContent = (props) => {
   const { conversation } = props;
   const { latestMessageText, otherUser } = conversation;
-  // const read = getReadStatus(conversation, otherUser);
   const classes = useStyles();
 
   return (
