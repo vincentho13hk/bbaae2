@@ -43,7 +43,7 @@ describe("New Feature: Unread Messages", () => {
     cy.contains(new RegExp("^3$", "g")).should(
       "have.css",
       "background-color",
-      "rgb(63, 146, 255)"
+      "rgb(58, 141, 255)"
     );
     cy.contains("Third message").should(($labels) => {
       expect($labels).to.have.css("font-weight", "600");
