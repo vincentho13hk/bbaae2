@@ -1,6 +1,7 @@
 const Conversation = require("./conversation");
 const User = require("./user");
 const Message = require("./message");
+const GroupParticipant = require("./participant");
 
 // associations
 
@@ -10,8 +11,11 @@ Conversation.belongsTo(User, { as: "user2" });
 Message.belongsTo(Conversation);
 Conversation.hasMany(Message);
 
+// Add for conversations that have more than two users
+Conversation.belongsToMany(User, { through: "participants" });
+
 module.exports = {
   User,
   Conversation,
-  Message
+  Message,
 };
