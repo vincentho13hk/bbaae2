@@ -12,10 +12,7 @@ Message.belongsTo(Conversation);
 Conversation.hasMany(Message);
 
 // Add for conversations that have more than two users
-Conversation.hasMany(GroupParticipant);
-GroupParticipant.belongsTo(Conversation);
-User.hasMany(GroupParticipant);
-GroupParticipant.belongsTo(User);
+Conversation.belongsToMany(User, { through: "participants" });
 
 module.exports = {
   User,
